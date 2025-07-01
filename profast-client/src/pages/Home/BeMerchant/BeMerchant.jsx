@@ -4,9 +4,9 @@ import location from '../../../assets/location-merchant.png'
 const BeMerchant = () => {
   return (
     <div 
-    data-aos="fade-up"
-     data-aos-anchor-placement="center-center"
-    className=" bg-[url('assets/be-a-merchant-bg.png')] bg-no-repeat bg-[#03373D] py-20 rounded-4xl my-16">
+    // data-aos="fade-up"
+    //  data-aos-anchor-placement="center-center"
+    className=" bg-[url('assets/be-a-merchant-bg.png')] bg-no-repeat bg-[#03393f] py-20 px-10 rounded-4xl my-16">
   <div className="hero-content flex-col lg:flex-row-reverse">
     <img
       src={location}

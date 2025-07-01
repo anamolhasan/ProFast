@@ -34,8 +34,8 @@ const Benefits = () => {
   return (
     <div className="py-16 mb-10 ">
       <div 
-      data-aos="fade-up"
-     data-aos-anchor-placement="center-center"
+    //   data-aos="fade-up"
+    //  data-aos-anchor-placement="center-center"
       className="max-w-7xl mx-auto px-4 ">
         <h2 className="text-3xl font-bold text-center mb-12">Why Choose Us</h2>
         <div className="flex flex-col gap-6">

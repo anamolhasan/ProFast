@@ -39,7 +39,7 @@ const BangladeshMap = ({ serviceCenters }) => {
     };
 
     return (
-        <div className="h-[800px] w-full rounded-lg overflow-hidden shadow-lg relative">
+        <div className="h-[500px] w-full rounded-lg overflow-hidden shadow-lg relative">
 
             <form
                 onSubmit={handleSearch}

@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import {
   createUserWithEmailAndPassword,
   GoogleAuthProvider,
+  onAuthStateChanged,
   signInWithEmailAndPassword,
   signInWithPopup,
   signOut,
@@ -46,7 +47,7 @@ const AuthProvider = ({ children }) => {
 
 
   useEffect(()=>{
-    const unsubscribe = (auth, (currentUser)=>{
+    const unsubscribe = onAuthStateChanged(auth, (currentUser)=>{
         setUser(currentUser)
         console.log('user in the auth state change', currentUser)
         setLoading(false)
