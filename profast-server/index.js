@@ -2,6 +2,7 @@ require("dotenv").config();
 const express = require("express");
 const cors = require("cors");
 const { MongoClient, ServerApiVersion, ObjectId } = require("mongodb");
+const admin = require("firebase-admin");
 
 // dotenv.config();
 const stripe = require("stripe")(process.env.PAYMENT_GATEWAY_KEY);
@@ -12,6 +13,13 @@ const port = process.env.PORT || 5000;
 // Middleware
 app.use(cors());
 app.use(express.json());
+
+
+const serviceAccount = require("./firebase-admin-key.json");
+
+admin.initializeApp({
+  credential: admin.credential.cert(serviceAccount)
+});
 
 // const uri = "mongodb+srv://profast:rL6U8gLGlUO852AD@cluster0.vta3l2l.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0";
 
@@ -29,17 +37,52 @@ async function run() {
     // Connect the client to the server	(optional starting in v4.7)
     // await client.connect();
     const db = client.db("parcelDB"); //database name
+    const usersCollection = db.collection('users')
     const parcelCollection = db.collection("parcels");
     const paymentsCollection = db.collection('payments')
+    const ridersCollection = db.collection('riders')
 
-    //  app.get('/parcels', async(req, res) => {
-    //     const result = parcelCollection.find().toArray()
-    //     res.send(result)
-    //  })
+
+    // custom middleware
+    const verifyFBToken = async (req, res, next) => {
+      const authHeader = req.headers.authorization
+      if(!authHeader){
+        return res.status(401).send({message: 'unauthorized access'})
+      }
+      const token = authHeader.split(' ')[1]
+      if(!token){
+        return res.status(401).send({message: 'unauthorized access'})
+      }
+
+      // verify token
+      try{
+        const decoded = await admin.auth().verifyIdToken(token)
+        req.decoded = decoded
+        next()
+      }
+      catch(error){
+         return res.status(401).send({message: 'unauthorized access'})
+      }
+   
+    }
+
+    //  users api
+    app.post('/users', async(req, res) => {
+      const email = req.body.email
+      const userExists = await usersCollection.findOne({email})
+      if(userExists){
+        return res.status(200).send({message: 'User already exists', inserted: false})
+      }
+      const user = req.body
+      const result = await usersCollection.insertOne(user)
+      res.send(result)
+    })
+
+    
 
     // parcels api
     // GET: All parcels OR parcels by user (created_by), sorted by latest
-    app.get("/parcels", async (req, res) => {
+    app.get("/parcels",verifyFBToken, async (req, res) => {
       try {
         const userEmail = req.query.email;
 
@@ -91,46 +134,7 @@ async function run() {
       }
     });
 
-    app.post("/tracking", async (req, res) => {
-      const {
-        tracking_id,
-        parcel_id,
-        status,
-        message,
-        updated_by = "",
-      } = req.body;
-
-      const log = {
-        tracking_id,
-        parcel_id: parcel_id ? new ObjectId(parcel_id) : undefined,
-        status,
-        message,
-        time: new Date(),
-        updated_by,
-      };
-
-      const result = await trackingCollection.insertOne(log);
-      res.send({ success: true, insertedId: result.insertedId });
-    });
-
-    app.get("/payments", async (req, res) => {
-      try {
-        const userEmail = req.query.email;
-
-        const query = userEmail ? { email: userEmail } : {};
-        const options = { sort: { paid_at: -1 } }; // Latest first
-
-        const payments = await paymentsCollection
-          .find(query, options)
-          .toArray();
-        res.send(payments);
-      } catch (error) {
-        console.error("Error fetching payment history:", error);
-        res.status(500).send({ message: "Failed to get payments" });
-      }
-    });
-
-    //  POST : create a new parcel
+     //  POST : create a new parcel
     app.post("/parcels", async (req, res) => {
       try {
         const newParcel = req.body;
@@ -156,6 +160,102 @@ async function run() {
         res.status(500).send({ message: "Failed to delete parcel" });
       }
     });
+
+    // rider api
+    app.post('/riders', async(req, res) =>{
+      const rider = req.body
+      const result = await ridersCollection.insertOne(rider)
+      res.send(result) 
+    })
+
+     app.get("/riders/pending", async (req, res) => {
+            try {
+                const pendingRiders = await ridersCollection
+                    .find({ status: "pending" })
+                    .toArray();
+
+                res.send(pendingRiders);
+            } catch (error) {
+                console.error("Failed to load pending riders:", error);
+                res.status(500).send({ message: "Failed to load pending riders" });
+            }
+        });
+
+          app.get("/riders/active", async (req, res) => {
+            const result = await ridersCollection.find({ status: "active" }).toArray();
+            res.send(result);
+        });
+
+         app.patch("/riders/:id/status", async (req, res) => {
+            const { id } = req.params;
+            const { status } = req.body;
+            const query = { _id: new ObjectId(id) }
+            const updateDoc = {
+                $set:
+                {
+                    status
+                }
+            }
+
+            try {
+                const result = await ridersCollection.updateOne(
+                    query, updateDoc
+
+                );
+                res.send(result);
+            } catch (err) {
+                res.status(500).send({ message: "Failed to update rider status" });
+            }
+        });
+
+
+
+    // tracking api
+    app.post("/tracking", async (req, res) => {
+      const {
+        tracking_id,
+        parcel_id,
+        status,
+        message,
+        updated_by = "",
+      } = req.body;
+
+      const log = {
+        tracking_id,
+        parcel_id: parcel_id ? new ObjectId(parcel_id) : undefined,
+        status,
+        message,
+        time: new Date(),
+        updated_by,
+      };
+
+      const result = await trackingCollection.insertOne(log);
+      res.send({ success: true, insertedId: result.insertedId });
+    });
+
+    // payments api
+    app.get("/payments",verifyFBToken, async (req, res) => {
+      try {
+        const userEmail = req.query.email;
+
+        if(req.decoded.email !== userEmail){
+           return res.status(403).send({message: 'forbidden access'})
+        }
+
+        const query = userEmail ? { email: userEmail } : {};
+        const options = { sort: { paid_at: -1 } }; // Latest first
+
+        const payments = await paymentsCollection
+          .find(query, options)
+          .toArray();
+        res.send(payments);
+      } catch (error) {
+        console.error("Error fetching payment history:", error);
+        res.status(500).send({ message: "Failed to get payments" });
+      }
+    });
+
+   
 
     // POST: Record payment and update parcel status
     app.post("/payments", async (req, res) => {
@@ -202,6 +302,7 @@ async function run() {
       }
     });
 
+    // create payment intent api
     app.post("/create-payment-intent", async (req, res) => {
       const amountInCents = req.body.amountInCents;
       try {
