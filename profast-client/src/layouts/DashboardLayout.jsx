@@ -1,7 +1,14 @@
 import React from "react";
 import { FaBars } from "react-icons/fa";
-import { Link, Outlet } from "react-router";
+import { Link, NavLink, Outlet } from "react-router";
 import ProFastLogo from "../pages/shared/ProFastLogo/ProFastLogo";
+import {
+  FaHome,
+  FaBoxOpen,
+  FaMoneyCheckAlt,
+  FaUserEdit,
+  FaSearchLocation,
+} from "react-icons/fa";
 
 const DashboardLayout = () => {
   return (
@@ -19,11 +26,11 @@ const DashboardLayout = () => {
               <FaBars />
             </label>
           </div>
-          <div className="mx-2 flex-1 px-2 lg:hidden">Dashboard</div>          
+          <div className="mx-2 flex-1 px-2 lg:hidden">Dashboard</div>
         </div>
         {/* Page content here */}
         <Outlet />
-        {/* Page content here */}     
+        {/* Page content here */}
       </div>
 
       <div className="drawer-side">
@@ -36,14 +43,37 @@ const DashboardLayout = () => {
           {/* Sidebar content here */}
           <ProFastLogo />
           <li>
-            <a>Sidebar Item s1</a>
+            <NavLink to="/dashboard">
+              <FaHome className="inline-block mr-2" />
+              Home
+            </NavLink>
           </li>
           <li>
-            <Link to={'/dashboard/myParcels'}>My Parcels</Link>
+            <NavLink to="/dashboard/myParcels">
+              <FaBoxOpen className="inline-block mr-2" />
+              My Parcels
+            </NavLink>
+          </li>
+          <li>
+            <NavLink to="/dashboard/paymentHistory">
+              <FaMoneyCheckAlt className="inline-block mr-2" />
+              Payment History
+            </NavLink>
+          </li>
+          <li>
+            <NavLink to="/dashboard/track">
+              <FaSearchLocation className="inline-block mr-2" />
+              Track a Package
+            </NavLink>
+          </li>
+          <li>
+            <NavLink to="/dashboard/profile">
+              <FaUserEdit className="inline-block mr-2" />
+              Update Profile
+            </NavLink>
           </li>
         </ul>
       </div>
-
     </div>
   );
 };
