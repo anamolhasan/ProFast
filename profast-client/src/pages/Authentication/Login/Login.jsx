@@ -25,14 +25,18 @@ const Login = () => {
           .catch(error => console.log(error))
     }
   return (
-    <div>
+   <div className="card  w-full ">
+      <div className="card-body">
+        <h1 className="card text-4xl font-bold">
+          Create Login
+        </h1>
       <form onSubmit={handleSubmit(onSubmit)}>
         <fieldset className="fieldset">
           <label className="label">Email</label>
           <input 
           {...register('email')}
           type="email" 
-          className="input" 
+          className="input w-full"
           placeholder="Email" 
           />
 
@@ -43,7 +47,7 @@ const Login = () => {
             minLength: 6
           })}
           type="password" 
-          className="input" 
+          className="input w-full"
           placeholder="Password" 
           />
           {
@@ -56,9 +60,10 @@ const Login = () => {
           <div><a className="link link-hover">Forgot password?</a> </div>
           <button className="btn btn-neutral mt-4">Login</button>
         </fieldset>
-        <p><small>New to this website? <Link to={'/register'}>Register</Link></small></p>
+        <p><small>New to this website? <Link state={{from}} className="font-bold ml-1" to={'/register'}>Register</Link></small></p>
       </form>
       <SocialLogin />
+    </div>
     </div>
   );
 };

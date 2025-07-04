@@ -21,7 +21,7 @@ const PendingRiders = () => {
         return <LoadingSpinner />
     }
 
-    const handleDecision = async (id, action) => {
+    const handleDecision = async (id, action, email) => {
         const confirm = await Swal.fire({
             title: `${action === "approve" ? "Approve" : "Reject"} Application?`,
             icon: "warning",
@@ -33,8 +33,10 @@ const PendingRiders = () => {
         if (!confirm.isConfirmed) return;
 
         try {
+            const status = action === "approve" ? "active" : "rejected"
             await axiosSecure.patch(`/riders/${id}/status`, {
-                status: action === "approve" ? "active" : "rejected",
+                status,
+                email
             });
 
             refetch();

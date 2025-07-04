@@ -1,5 +1,5 @@
 import React from "react";
-import { FaBars, FaUserCheck, FaUserClock } from "react-icons/fa";
+import { FaBars, FaMotorcycle, FaUserCheck, FaUserClock, FaUserShield } from "react-icons/fa";
 import { Link, NavLink, Outlet } from "react-router";
 import ProFastLogo from "../pages/shared/ProFastLogo/ProFastLogo";
 import {
@@ -9,8 +9,10 @@ import {
   FaUserEdit,
   FaSearchLocation,
 } from "react-icons/fa";
+import useUserRole from "../hooks/useUserRole";
 
 const DashboardLayout = () => {
+  const { role, roleLoading } = useUserRole();
   return (
     <div className="drawer lg:drawer-open">
       <input id="my-drawer-2" type="checkbox" className="drawer-toggle" />
@@ -73,18 +75,35 @@ const DashboardLayout = () => {
             </NavLink>
           </li>
           {/* riders link */}
-          <li>
-            <NavLink to="/dashboard/active-riders">
-              <FaUserCheck className="inline-block mr-2" />
-              Active Riders
-            </NavLink>
-          </li>
-          <li>
-            <NavLink to="/dashboard/pending-riders">
-              <FaUserClock className="inline-block mr-2" />
-              Pending Riders
-            </NavLink>
-          </li>
+          { !roleLoading && role === 'admin' &&
+            <>
+             <li>
+                <NavLink to="/dashboard/assign-riders">
+                  <FaMotorcycle className="inline-block mr-2" />
+                  Assign Riders
+                </NavLink>
+              </li>
+              <li>
+                <NavLink to="/dashboard/active-riders">
+                  <FaUserCheck className="inline-block mr-2" />
+                  Active Riders
+                </NavLink>
+              </li>
+             
+              <li>
+                <NavLink to="/dashboard/pending-riders">
+                  <FaUserClock className="inline-block mr-2" />
+                  Pending Riders
+                </NavLink>
+              </li>
+              <li>
+                <NavLink to="/dashboard/makeAdmin">
+                  <FaUserShield className="inline-block mr-2" />
+                  Make Admin
+                </NavLink>
+              </li>
+            </>
+          }
         </ul>
       </div>
     </div>

@@ -17,6 +17,11 @@ import BeARider from "../pages/Dashboard/BeARider/BeARider";
 import PendingRiders from "../pages/Dashboard/PendingRiders/PendingRiders";
 import ActiveRiders from "../pages/Dashboard/ActiveRiders/ActiveRiders";
 import UpdateProfile from "../pages/Dashboard/UpdateProfile/UpdateProfile";
+import MakeAdmin from "../pages/Dashboard/MakeAdmin/MakeAdmin";
+// import Forbidden from "../pages/Dashboard/Forbidden/Forbidden";
+import AdminRoute from "../private/AdminRoute";
+import Forbidden from "../pages/Forbidden/Forbidden";
+import AssignRider from "../pages/Dashboard/AssignRider/AssignRider";
 
 
 
@@ -45,6 +50,10 @@ export const router = createBrowserRouter([
         {
           path: 'about',
           Component: About,
+        },
+        {
+          path: 'forbidden',
+          Component: Forbidden
         },
         {
           path: 'sendParcel',
@@ -95,13 +104,30 @@ export const router = createBrowserRouter([
         path: 'profile',
         Component: UpdateProfile 
       },
+      {
+        path: 'assign-riders',
+        element: <AdminRoute>
+          <AssignRider />
+        </AdminRoute> 
+      },
        {
         path: 'pending-riders',
-        Component: PendingRiders
+        element: <AdminRoute>
+          <PendingRiders />
+        </AdminRoute>
       },
       {
         path: 'active-riders',
-        Component: ActiveRiders
+        element: <AdminRoute>
+          <ActiveRiders />
+        </AdminRoute>
+      },
+      {
+        path: 'makeAdmin',
+        element: <AdminRoute>
+          <MakeAdmin />
+        </AdminRoute>,
+        //  Component: MakeAdmin
       }
     ] 
   }
