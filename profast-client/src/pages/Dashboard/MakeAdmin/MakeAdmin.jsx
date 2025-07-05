@@ -40,7 +40,7 @@ const MakeAdmin = () => {
             confirmButtonText: "Yes",
             cancelButtonText: "Cancel",
         });
-
+ 
         if (!confirm.isConfirmed) return;
 
         try {

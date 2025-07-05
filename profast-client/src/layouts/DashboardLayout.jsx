@@ -1,5 +1,5 @@
 import React from "react";
-import { FaBars, FaMotorcycle, FaUserCheck, FaUserClock, FaUserShield } from "react-icons/fa";
+import { FaBars, FaCheckCircle, FaMotorcycle, FaTasks, FaUserCheck, FaUserClock, FaUserShield } from "react-icons/fa";
 import { Link, NavLink, Outlet } from "react-router";
 import ProFastLogo from "../pages/shared/ProFastLogo/ProFastLogo";
 import {
@@ -74,7 +74,33 @@ const DashboardLayout = () => {
               Update Profile
             </NavLink>
           </li>
-          {/* riders link */}
+
+          {/* rider links */}
+          {
+            !roleLoading && role === 'rider' && 
+            <>
+            <li>
+                <NavLink to="/dashboard/pending-deliveries">
+                  <FaTasks className="inline-block mr-2" />
+                  Pending Deliveries
+                </NavLink>
+              </li>
+            <li>
+                <NavLink to="/dashboard/completed-deliveries">
+                  <FaCheckCircle className="inline-block mr-2" />
+                  Completed Deliveries
+                </NavLink>
+              </li>
+            <li>
+                <NavLink to="/dashboard/my-earnings">
+                  <FaCheckCircle className="inline-block mr-2" />
+                  My Earnings
+                </NavLink>
+              </li>
+            </>
+          }
+
+          {/* admin link */}
           { !roleLoading && role === 'admin' &&
             <>
              <li>

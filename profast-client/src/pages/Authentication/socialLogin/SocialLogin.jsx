@@ -37,7 +37,7 @@ const SocialLogin = () => {
   return (
     <div>
       <div className="divider">OR</div>
-      <div className="space-y-5 text-center">
+      <div className="space-y-5 text-center mt-10">
         {/* GitHub */}
         {/* <button className="btn bg-black text-white border-black btn-block">
         <FaGithub />

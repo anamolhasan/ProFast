@@ -6,6 +6,7 @@ import useAxiosSecure from '../../../hooks/useAxiosSecure';
 import useAuth from '../../../hooks/useAuth';
 import Swal from 'sweetalert2';
 import LoadingRing from '../../shared/Loading/LoadingRing';
+import useTrackingLogger from '../../../hooks/useTrackingLogger';
 
 const PaymentForm = () => {
     const stripe = useStripe();
@@ -13,6 +14,7 @@ const PaymentForm = () => {
     const { parcelId } = useParams();
     const { user } = useAuth();
     const axiosSecure = useAxiosSecure();
+    const {logTracking} = useTrackingLogger()
     const navigate = useNavigate();
 
     const [error, setError] = useState('');
@@ -78,7 +80,7 @@ const PaymentForm = () => {
                     },
                 },
             });
-
+ 
             if (result.error) {
                 setError(result.error.message);
             } else {
@@ -105,6 +107,15 @@ const PaymentForm = () => {
                             html: `<strong>Transaction ID:</strong> <code>${transactionId}</code>`,
                             confirmButtonText: 'Go to My Parcels',
                         });
+
+                          await logTracking(
+                            {
+                                tracking_id: parcelInfo.tracking_id,
+                                status: "payment_done",
+                                details: `Paid by ${user.displayName}`,
+                                updated_by: user.email,
+                            }
+                        )
 
                         // ✅ Redirect to /myParcels
                         navigate('/dashboard/myParcels');

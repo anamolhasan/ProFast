@@ -82,13 +82,13 @@ const PendingRiders = () => {
                                         <FaEye />
                                     </button>
                                     <button
-                                        onClick={() => handleDecision(rider._id, "approve")}
+                                        onClick={() => handleDecision(rider._id, "approve", rider.email)}
                                         className="btn btn-sm btn-success"
                                     >
                                         <FaCheck />
                                     </button>
                                     <button
-                                        onClick={() => handleDecision(rider._id, "reject")}
+                                        onClick={() => handleDecision(rider._id, "reject", rider.email)}
                                         className="btn btn-sm btn-error"
                                     >
                                         <FaTimes />

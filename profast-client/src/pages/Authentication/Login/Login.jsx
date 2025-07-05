@@ -26,7 +26,7 @@ const Login = () => {
     }
   return (
    <div className="card  w-full ">
-      <div className="card-body">
+      <div className="card-body px-10">
         <h1 className="card text-4xl font-bold">
           Create Login
         </h1>

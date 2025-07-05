@@ -8,7 +8,7 @@ const Payment = () => {
     const stripPromise = loadStripe(import.meta.env.VITE_payment_key)
   return (
     <Elements stripe={stripPromise}>
-      <PaymentForm />
+      <PaymentForm /> 
     </Elements>
   )
 }
